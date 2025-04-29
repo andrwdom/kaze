@@ -40,9 +40,8 @@ export default function Home() {
       setButtonGlow(true);
       setTimeout(() => setShowThanks(false), 2200);
       setTimeout(() => setButtonGlow(false), 600);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
