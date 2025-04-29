@@ -17,6 +17,8 @@ const emailSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+}, {
+  collection: 'emails'
 });
 
 export default mongoose.models.Email || mongoose.model('Email', emailSchema); 

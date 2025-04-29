@@ -37,11 +37,23 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
         },
         body: JSON.stringify({ email }),
+        cache: 'no-store',
       });
 
-      const data = await response.json() as ApiResponse;
+      // Log response details for debugging
+      console.log('Response status:', response.status);
+      console.log('Content-Type:', response.headers.get('content-type'));
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        console.error('JSON parse error:', e);
+        throw new Error('Server error. Please try again.');
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Something went wrong');

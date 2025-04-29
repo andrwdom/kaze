@@ -1,75 +1,81 @@
-import connectDB from '@/lib/mongodb';
+import mongoose from 'mongoose';
 import Email from '@/models/Email';
-import { ratelimit } from '@/lib/rate-limit';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import { headers } from 'next/headers';
-import { sendWelcomeEmail } from '@/lib/email';
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error('MONGODB_URI is not defined');
+}
+
+// Create a new ratelimiter that allows 5 requests per minute
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '1 m'),
+  analytics: true,
+});
 
 export async function POST(req: Request) {
+  console.log('1. Starting email subscription...');
+  
   try {
-    const ip = (await headers()).get('x-forwarded-for') || '127.0.0.1';
-    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
-
+    // 1. Check rate limit
+    const ip = headers().get('x-forwarded-for') || '127.0.0.1';
+    const { success } = await ratelimit.limit(ip);
+    
     if (!success) {
       return new Response(
-        JSON.stringify({ error: 'Too many requests. Please try again later.' }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'X-RateLimit-Limit': limit.toString(),
-            'X-RateLimit-Remaining': remaining.toString(),
-            'X-RateLimit-Reset': reset.toString(),
-          },
-        }
+        JSON.stringify({ 
+          error: 'Please wait a moment before trying again.' 
+        }),
+        { status: 429, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
+    // 2. Get the email
     const { email } = await req.json();
+    console.log('2. Received email:', email);
 
+    // 3. Basic email validation
     if (!email || !email.includes('@')) {
       return new Response(
-        JSON.stringify({ error: 'Please provide a valid email address' }),
+        JSON.stringify({ error: 'Please enter a valid email address.' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    await connectDB();
+    // 4. Connect to MongoDB
+    console.log('3. Connecting to MongoDB...');
+    await mongoose.connect(MONGODB_URI);
+    console.log('4. MongoDB connected successfully');
 
-    const existingEmail = await Email.findOne({ email });
-    if (existingEmail) {
-      return new Response(
-        JSON.stringify({ error: 'Email already subscribed' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
+    // 5. Save the email
+    console.log('5. Attempting to save email...');
     await Email.create({ email });
-    console.log('New subscription:', await Email.findOne({ email }));
-    
-    // Send welcome email
-    try {
-      await sendWelcomeEmail(email);
-    } catch (error) {
-      console.error('Failed to send welcome email:', error);
-      // Don't fail the subscription if email sending fails
+    console.log('6. Email saved successfully');
+
+    // 6. Return success
+    return new Response(
+      JSON.stringify({ success: true, message: 'Successfully subscribed!' }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+
+  } catch (error: any) {
+    console.error('ERROR:', error);
+
+    // Handle duplicate emails gracefully
+    if (error.code === 11000) {
+      return new Response(
+        JSON.stringify({ success: true, message: 'Successfully subscribed!' }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
+    // Return error
     return new Response(
-      JSON.stringify({ message: 'Successfully subscribed!' }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-RateLimit-Limit': limit.toString(),
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': reset.toString(),
-        },
-      }
-    );
-  } catch (error) {
-    console.error('Subscription error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Failed to save email. Please try again.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

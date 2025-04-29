@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -14,8 +13,10 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    // Necessary for deployment
-    serverActions: true,
+    // Configure server actions
+    serverActions: {
+      bodySizeLimit: '2mb'
+    },
   },
 }
 
