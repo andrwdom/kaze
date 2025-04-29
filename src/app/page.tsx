@@ -5,6 +5,8 @@ import { FaInstagram, FaTwitter } from 'react-icons/fa';
 
 interface ApiResponse {
   error?: string;
+  success?: boolean;
+  message?: string;
 }
 
 export default function Home() {
@@ -44,9 +46,9 @@ export default function Home() {
       setButtonGlow(true);
       setTimeout(() => setShowThanks(false), 2200);
       setTimeout(() => setButtonGlow(false), 600);
-    } catch (error) {
-      console.error('Subscription error:', error);
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+    } catch (err) {
+      console.error('Subscription error:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
