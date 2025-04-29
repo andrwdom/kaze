@@ -40,8 +40,9 @@ export default function Home() {
       setButtonGlow(true);
       setTimeout(() => setShowThanks(false), 2200);
       setTimeout(() => setButtonGlow(false), 600);
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
