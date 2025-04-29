@@ -43,12 +43,8 @@ export async function POST(req: Request) {
       );
     }
 
-<<<<<<< HEAD
     await Email.create({ email });
     console.log('New subscription:', await Email.findOne({ email }));
-=======
-    const newEmail = await Email.create({ email });
->>>>>>> 9f24150ca907067f918d168ab7505b4f7a028244
     
     // Send welcome email
     try {
