@@ -155,7 +155,7 @@ export default function Home() {
         {/* Social Links */}
         <div className="flex justify-center space-x-8 mt-12">
           <a 
-            href="#" 
+            href="https://www.instagram.com/thekaze.shop/" 
             className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"
             aria-label="Follow us on Instagram"
           >
