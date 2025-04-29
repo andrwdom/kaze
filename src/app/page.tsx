@@ -1,27 +1,32 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { FaInstagram, FaTwitter } from 'react-icons/fa';
 
 interface ApiResponse {
   error?: string;
-  success?: boolean;
+  success: boolean;
   message?: string;
 }
 
+type SubmitError = {
+  message: string;
+};
+
 export default function Home() {
-  const [mounted, setMounted] = useState(false);
-  const [email, setEmail] = useState('');
-  const [showThanks, setShowThanks] = useState(false);
-  const [buttonGlow, setButtonGlow] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [showThanks, setShowThanks] = useState<boolean>(false);
+  const [buttonGlow, setButtonGlow] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
@@ -56,7 +61,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center relative overflow-hidden">
