@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react';
 import { FaInstagram, FaTwitter } from 'react-icons/fa';
 
+interface ApiResponse {
+  error?: string;
+}
+
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
@@ -29,7 +33,7 @@ export default function Home() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as ApiResponse;
 
       if (!response.ok) {
         throw new Error(data.error || 'Something went wrong');
@@ -40,9 +44,9 @@ export default function Home() {
       setButtonGlow(true);
       setTimeout(() => setShowThanks(false), 2200);
       setTimeout(() => setButtonGlow(false), 600);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      setError(errorMessage);
+    } catch (error) {
+      console.error('Subscription error:', error);
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -147,7 +151,7 @@ export default function Home() {
       <div className={`absolute bottom-8 text-sm text-gray-500 transform transition-all duration-1000 delay-500 ${
         mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
       }`}>
-        © 2024 KAZE. All rights reserved.
+        © 2024 KAZE. All rights reserved.  Site by <a href="https://www.instagram.com/andrwdom" className="text-white hover:text-gray-300 transition-all duration-300">Andrew Dominic</a>
       </div>
     </main>
   );
