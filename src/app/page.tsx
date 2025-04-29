@@ -21,7 +21,7 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
     setError('');
@@ -46,9 +46,13 @@ export default function Home() {
       setButtonGlow(true);
       setTimeout(() => setShowThanks(false), 2200);
       setTimeout(() => setButtonGlow(false), 600);
-    } catch (err) {
-      console.error('Subscription error:', err);
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } catch (error: unknown) {
+      console.error('Subscription error:', error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
