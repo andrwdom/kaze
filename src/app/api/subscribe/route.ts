@@ -43,7 +43,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const newEmail = await Email.create({ email });
+    await Email.create({ email });
+    console.log('New subscription:', await Email.findOne({ email }));
     
     // Send welcome email
     try {

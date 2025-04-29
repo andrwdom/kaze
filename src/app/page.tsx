@@ -40,8 +40,8 @@ export default function Home() {
       setButtonGlow(true);
       setTimeout(() => setShowThanks(false), 2200);
       setTimeout(() => setButtonGlow(false), 600);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (error: any) {
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
