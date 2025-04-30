@@ -245,7 +245,7 @@ export default function Home() {
       </div>
 
       <div className={bottomTextClass}>
-        © 2024 KAZE. All rights reserved. | Site by <a href="https://www.instagram.com/andrwdom" className="text-white hover:text-gray-300 transition-all duration-300">andrwdom</a>
+        © 2024 KAZE. All rights reserved. | Site by <a href="https://linktr.ee/andrewdom" className="text-white hover:text-gray-300 transition-all duration-300">andrwdom</a>
       </div>
     </main>
   );
