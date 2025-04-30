@@ -175,7 +175,7 @@ export default function Home() {
       <div className={`absolute bottom-8 text-sm text-gray-500 transform transition-all duration-1000 delay-500 ${
         mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
       }`}>
-        © 2024 KAZE. All rights reserved. | Site by <a href="https://www.instagram.com/andrwdom" className="text-white hover:text-gray-300 transition-all duration-300">Andrew Dominic</a>
+        © 2024 KAZE. All rights reserved. | Site by <a href="https://www.instagram.com/andrwdom" className="text-white hover:text-gray-300 transition-all duration-300">andrwdom</a>
       </div>
     </main>
   );
