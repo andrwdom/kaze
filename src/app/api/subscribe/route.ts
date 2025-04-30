@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   
   try {
     // 1. Check rate limit
-    const ip = headers().get('x-forwarded-for') || '127.0.0.1';
+    const ip = (await headers()).get('x-forwarded-for') || '127.0.0.1';
     const { success } = await ratelimit.limit(ip);
     
     if (!success) {
